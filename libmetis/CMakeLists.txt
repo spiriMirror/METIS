@@ -1,15 +1,15 @@
-# Add this directory for internal users.
-include_directories(.)
+add_library(metis STATIC)
 
-# Find sources.
-file(GLOB metis_sources *.c)
+target_include_directories(metis PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(metis PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# Build libmetis.
-add_library(metis ${METIS_LIBRARY_TYPE} ${metis_sources})
+file(GLOB metis_sources "${CMAKE_CURRENT_SOURCE_DIR}/*.c")
+target_sources(metis PRIVATE ${metis_sources})
 
-if(METIS_INSTALL)
-  install(TARGETS metis
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION lib
-    ARCHIVE DESTINATION lib)
-endif()
+target_link_libraries(metis PRIVATE GKlib)
+
+message(STATUS "METIS_IDXTYPEWIDTH: ${METIS_IDXTYPEWIDTH}")
+message(STATUS "METIS_REALTYPEWIDTH: ${METIS_REALTYPEWIDTH}")
+
+target_compile_definitions(metis PRIVATE "-DIDXTYPEWIDTH=${METIS_IDXTYPEWIDTH}")
+target_compile_definitions(metis PRIVATE "-DREALTYPEWIDTH=${METIS_REALTYPEWIDTH}")
